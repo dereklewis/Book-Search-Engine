@@ -34,7 +34,6 @@ export const SAVE_BOOK = gql`
     $description: String!
     $title: String!
     $bookId: String
-    $image: GraphQLString
     $link: String
   ) {
     saveBook(
@@ -42,7 +41,6 @@ export const SAVE_BOOK = gql`
       description: $description
       title: $title
       bookId: $bookId
-      image: $image
       link: $link
     ) {
       token
@@ -64,7 +62,6 @@ export const REMOVE_BOOK = gql`
     $description: String!
     $title: String!
     $bookId: String
-    $image: GraphQLString
     $link: String
   ) {
     removeBook(
@@ -72,7 +69,6 @@ export const REMOVE_BOOK = gql`
       description: $description
       title: $title
       bookId: $bookId
-      image: $image
       link: $link
     ) {
       removeBook {
@@ -80,7 +76,6 @@ export const REMOVE_BOOK = gql`
         bookId
         authors
         description
-        image
         link
       }
     }

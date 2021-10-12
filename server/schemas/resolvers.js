@@ -1,6 +1,6 @@
-const { AuthenticationError } = require('apollo-server-express');
-const { User } = require('../models/User');
-const { signToken } = require('../utils/auth');
+const { AuthenticationError } = require("apollo-server-express");
+const { User } = require("../models/User");
+const { signToken } = require("../utils/auth");
 
 const resolvers = {
   Query: {
@@ -11,12 +11,12 @@ const resolvers = {
     user: async (parent, { userId }) => {
       return User.findOne({ _id: userId });
     },
-    // By adding context to our query, we can retrieve the logged in user without specifically searching for them
+
     me: async (parent, args, context) => {
       if (context.user) {
         return user.findOne({ _id: context.user._id });
       }
-      throw new AuthenticationError('You need to be logged in!');
+      throw new AuthenticationError("You need to be logged in!");
     },
   },
 
@@ -31,45 +31,19 @@ const resolvers = {
       const profile = await addUser.findOne({ email });
 
       if (!profile) {
-        throw new AuthenticationError('No profile with this email found!');
+        throw new AuthenticationError("No profile with this email found!");
       }
 
       const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
-        throw new AuthenticationError('Incorrect password!');
+        throw new AuthenticationError("Incorrect password!");
       }
 
       const token = signToken(user);
       return { token, user };
     },
 
-    // Add a third argument to the resolver to access data in our `context`
-    addBook: async (parent, { userId, book }, context) => {
-      // If context has a `user` property, that means the user executing this mutation has a valid JWT and is logged in
-      if (context.user) {
-        return User.findOneAndUpdate(
-          { _id: userId },
-          {
-            $addToSet: { books: book },
-          },
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-      }
-      // If user attempts to execute this mutation and isn't logged in, throw an error
-      throw new AuthenticationError('You need to be logged in!');
-    },
-    // Set up mutation so a logged in user can only remove their profile and no one else's
-    removeUser: async (parent, args, context) => {
-      if (context.user) {
-        return User.findOneAndDelete({ _id: context.user._id });
-      }
-      throw new AuthenticationError('You need to be logged in!');
-    },
-    // Make it so a logged in user can only remove a skill from their own profile
     removeBook: async (parent, { book }, context) => {
       if (context.user) {
         return User.findOneAndUpdate(
@@ -78,7 +52,7 @@ const resolvers = {
           { new: true }
         );
       }
-      throw new AuthenticationError('You need to be logged in!');
+      throw new AuthenticationError("You need to be logged in!");
     },
   },
 };
